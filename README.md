@@ -1,2 +1,2 @@
 # SH-MDA
-The code for SH-MDA. The code will be released upon the acceptance of our paper, which is currently under review. We ask for your understanding.
+Sorry for the inconvenience caused to you. Due to the recent backlog of work, the code is currently being sorted out. If you have urgent and reasonable needs, please contact wuxu18@nudt.edu.cn.
