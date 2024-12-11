@@ -167,7 +167,7 @@ def cross_subject(data, label, session_id, subject_id, category_number, batch_si
                     top_k=top_k
                     )
     acc = model.train()
-    # torch.save(model.__getModel__(), 'H:/model_save/seediv-cross-subject/session{}_subject{}.pth'.format(session_id+1,subject_id+1))
+    # torch.save(model.__getModel__(), 'H:/model_save/seed-cross-subject/session{}_subject{}.pth'.format(session_id+1,subject_id+1))
     print('Target_subject_id: {}, current_session_id: {}, acc: {}'.format(test_idx, session_id, acc))
     return acc
 
@@ -176,11 +176,11 @@ def cross_subject(data, label, session_id, subject_id, category_number, batch_si
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='SH-MDA parameters')
-    parser.add_argument('--dataset', type=str, default='seed4',
+    parser.add_argument('--dataset', type=str, default='seed3',
                         help='the dataset used for SH-MDA, "seed3" or "seed4"')
     parser.add_argument('--batch_size', type=int, default=64,
                         help='size for one batch, integer')
-    parser.add_argument('--epoch', type=int, default=200,
+    parser.add_argument('--epoch', type=int, default=50,
                         help='training epoch, integer')
     parser.add_argument('--session_id_main', type=int, default=2,
                         help='training session data, integer,0,1,2')

@@ -134,16 +134,13 @@ class MDA():
                 correct += pred.eq(target).cpu().sum()
         return correct
 
-def cross_subject(data, label, session_id, subject_id, category_number, batch_size, iteration, lr,hybrid_parameter,ce_loss_parameter,dis_loss_parameter,top_k):
-    one_session_data, one_session_label = copy.deepcopy(data[session_id]), copy.deepcopy(label[session_id])
-    train_idxs = list(range(15))
-    del train_idxs[subject_id]
-    test_idx = subject_id
-    target_data, target_label = copy.deepcopy(one_session_data[test_idx]), copy.deepcopy(one_session_label[test_idx])
-    source_data, source_label = copy.deepcopy(one_session_data[train_idxs]), copy.deepcopy(one_session_label[train_idxs])
+def cross_session(data, label, session_id, subject_id, category_number, batch_size, iteration, lr,hybrid_parameter,ce_loss_parameter,dis_loss_parameter):
+    train_idxs = list(range(3))
+    del train_idxs[session_id]
+    test_idx = session_id
 
-    del one_session_label
-    del one_session_data
+    target_data, target_label = copy.deepcopy(data[test_idx][subject_id]), copy.deepcopy(label[test_idx][subject_id])
+    source_data, source_label = copy.deepcopy(data[train_idxs][:, subject_id]), copy.deepcopy(label[train_idxs][:, subject_id])
 
     source_loaders = []
     for j in range(len(source_data)):
@@ -155,20 +152,20 @@ def cross_subject(data, label, session_id, subject_id, category_number, batch_si
                                                 batch_size=batch_size,
                                                 shuffle=True,
                                                 drop_last=True)
-
-    model = MDA(model=models.MDA(number_of_source=len(source_loaders), number_of_category=category_number,hybrid_parameter=hybrid_parameter),
+    model = MDA(model=models.MDA( number_of_source=len(source_loaders), number_of_category=category_number,hybrid_parameter=hybrid_parameter),
                     source_loaders=source_loaders,
                     target_loader=target_loader,
                     batch_size=batch_size,
                     iteration=iteration,
                     lr=lr,
-                    ce_loss_parameter=ce_loss_parameter,
-                    dis_loss_parameter=dis_loss_parameter,
-                    top_k=top_k
-                    )
+                    ce_loss_parameter = ce_loss_parameter,
+                    dis_loss_parameter = dis_loss_parameter
+    )
     acc = model.train()
-    # torch.save(model.__getModel__(), 'H:/model_save/seediv-cross-subject/session{}_subject{}.pth'.format(session_id+1,subject_id+1))
-    print('Target_subject_id: {}, current_session_id: {}, acc: {}'.format(test_idx, session_id, acc))
+    # torch.save(model.__getModel__(),
+    #            'H:/model_save/seed-cross-session/session{}_subject{}.pth'.format(session_id+1, subject_id + 1))
+    print('Target_session_id: {}, current_subject_id: {}, acc: {}'.format(test_idx, subject_id, acc))
+
     return acc
 
 
@@ -176,22 +173,22 @@ def cross_subject(data, label, session_id, subject_id, category_number, batch_si
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='SH-MDA parameters')
-    parser.add_argument('--dataset', type=str, default='seed4',
+    parser.add_argument('--dataset', type=str, default='seed3',
                         help='the dataset used for SH-MDA, "seed3" or "seed4"')
     parser.add_argument('--batch_size', type=int, default=64,
                         help='size for one batch, integer')
-    parser.add_argument('--epoch', type=int, default=200,
+    parser.add_argument('--epoch', type=int, default=50,
                         help='training epoch, integer')
-    parser.add_argument('--session_id_main', type=int, default=2,
+    parser.add_argument('--session_id_main', type=int, default=0,
                         help='training session data, integer,0,1,2')
     parser.add_argument('--lr', type=float, default=0.005, help='learning rate')
-    parser.add_argument('--hybrid_parameter', type=int, default=0.8,
+    parser.add_argument('--hybrid_parameter', type=int, default=0.6,
                         help='hybrid parameter, 0.8 for the cross-subject 0.6 for the cross-session')
     parser.add_argument('--ce_loss_parameter', type=int, default=0.1,
                         help='ce_loss_parameter')
     parser.add_argument('--dis_loss_parameter', type=int, default=0.1,
                         help='dis_loss parameter')
-    parser.add_argument('--top_k', type=int, default=14,
+    parser.add_argument('--top_k', type=int, default=2,
                         help='top_k')
 
     args = parser.parse_args()
@@ -224,10 +221,11 @@ if __name__ == '__main__':
         iteration = math.ceil(epoch*820/batch_size)
     print('Iteration: {}'.format(iteration))
 
-    csub = []
+    csesn = []
     for subject_id_main in range(15):
-        csub.append(cross_subject(data_tmp, label_tmp, session_id_main, subject_id_main, category_number,
-                                    batch_size, iteration, lr,hybrid_parameter,ce_loss_parameter,dis_loss_parameter,top_k))
-    print("Cross-subject: ", csub)
-    print("Cross-subject mean: ", np.mean(csub), "std: ", np.std(csub))
+           csesn.append(cross_session(data_tmp, label_tmp, session_id_main, subject_id_main, category_number,
+                                   batch_size, iteration, lr,hybrid_parameter,ce_loss_parameter,dis_loss_parameter))
+    print("Cross-session: ", csesn)
+    print("Cross-session mean: ", np.mean(csesn), "std: ", np.std(csesn))
+
 
