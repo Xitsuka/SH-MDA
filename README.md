@@ -1,2 +1,2 @@
 # SH-MDA
-This code reference work of Chen et al., “MS-MDA: Multisource Marginal Distribution Adaptation for Cross-subject and Cross-session EEG Emotion Recognition” (https://github.com/VoiceBeer/MS-MDA). Due to the recent backlog of work, the code is currently being sorted out. If you have urgent and reasonable needs, please contact wuxu18@nudt.edu.cn.
+The code for "Multi-source domain adaptation for EEG emotion recognition based on inter-domain sample hybridization" (DOI: 10.3389/fnhum.2024.1464431). This code reference work of Chen et al., "MS-MDA: Multisource Marginal Distribution Adaptation for Cross-subject and Cross-session EEG Emotion Recognition" (https://github.com/VoiceBeer/MS-MDA). If you have any questions, please contact wuxu18@nudt.edu.cn.
